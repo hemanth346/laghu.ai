@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Image Classifcation</title>
+  <script type="text/javascript" src = '/static/imgcls.js'></script>
+</head>
+
+<style>
+.button {
+  text-align: center;
+  display: block;
+  margin: 0 auto;
+}
+</style>
+
+<body>
+<h1 align="middle" >Train an image classifer on your custom data</h1>
+<h3>
+  Please Note: 
+</h3>
+  <li>1. Number of class labels are restricted to 5</li>
+  <br>
+  <li>2. Minimum of 10 images per class, maximum of 100 images</li>
+  <br>
+  
+
+
+<div id="Imgdata">
+  <script type="text/javascript" src = "static/imgcls.js"></script>
+
+  <form id="trainingData" method ="POST"  enctype= "multipart/form-data" name = 'trainingData' action = "/my-link/" >
+    
+    <p>Class label #1 : <input type="text" id= "cls_1" label="cls_1" name="cls_1" ></p>
+    <p><input type="file" id="cfiles_1"name="cfiles_1" multiple action="image/*" ></p>
+    <hr>
+    <p>Class label #2 : <input type="text" id="cls_2" label="cls_2" name="cls_2" ></p>
+    <p><input type="file" id="cfiles_2" name="cfiles_2" action="image/*" multiple ></p>
+    <hr>
+  </form>
+  <button type="button" style="font-size: 13px;" class = "buttonadd" onclick="addNewClass()"> Add one more class </button>
+  <button type="button" style="font-size: 13px;" class = "buttonadd" onclick="VerifyAddUpload()"> Verify and show upload option </button>
+  <br>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,20 @@
+{
+  "short_name": "DL App",
+  "name": "Full Stack DL App Demo",
+  "icons": [
+      {
+        "src": "android-chrome-96x96.png",
+        "sizes": "96x96",
+        "type": "image/png"
+      },
+      {
+        "src": "android-chrome-256x256.png",
+        "sizes": "256x256",
+        "type": "image/png"
+      }
+    ],
+    "start_url": ".",
+    "display": "standalone",
+    "theme_color": "#ffffff",
+    "background_color": "#ffffff"
+  }

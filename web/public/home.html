@@ -1,0 +1,238 @@
+<html>
+ <head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<style>
+body {
+  background-color: #E6E6FA;
+}
+#spinner
+{
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    background: url(KeyFrames.gif) 50% 50% no-repeat #ede9df;
+}
+</style>
+<script>
+$(document).ready(function(){
+
+var maxSize = 10, // MB
+		currentSize = 0,
+		remainSize = 0;
+
+function refreshSpace() {
+	$('#file1totalsize span').text(currentSize.toFixed(2));
+	$('#file1remainsize span').text(file1remainsize.toFixed(2));
+}
+
+$("#btn_id_1").click(function() {
+	$("#file_id_1").click();
+});
+
+$("#file_id_1").change(function(e) {
+	var files = e.target.files;
+    if (files.length < 5) {
+		alert('Minimum 5 Files required');
+		exit;
+	}
+	else if(files.length > 50)
+	{
+		alert('Maximum 50 Files allowed');
+		exit;
+	}
+	for (var i = 0, f; f = files[i]; i++) {
+		if (ParseFile(f) === false) {
+			alert('not enought space - there\'s only ' + file1remainsize.toFixed(2) + ' MB left');
+			break;
+		}
+	}
+
+	refreshSpace();
+
+	function ParseFile(file) {
+		var filename = file.name.replace(/\..+$/, '');
+		var filesize = file.size / 1024;
+		filesize = (Math.round((filesize / 1024) * 100) / 100);
+		var filetype = file.type.split('/').pop().toUpperCase();
+		if (filetype == 'JPEG' || filetype == 'JPG' || filetype == 'PNG') {
+			if (currentSize + filesize >= maxSize) {
+				return false;
+			}
+			currentSize += filesize;
+			file1remainsize = maxSize - currentSize;
+
+			$("#file1details").append("<tr data-file1size='" + filesize + "'><td><strong>" + filename + "</strong></td><td>" + filesize + " MB</td><td>" + filetype + "</td></tr>");
+		}
+		else {
+			alert('Only JPG, PDF n PNG files are allowed to upload.');
+		}
+	}
+});
+
+$("#file1details").on('click', '.delete', function(e) {
+	var $parent = $(this).closest('tr'),filesize = $parent.attr('data-file1size');
+	currentSize -= filesize;
+	file1remainsize = maxSize - currentSize;
+	refreshSpace();
+	$parent.remove();
+});
+
+$(".txt").blur(function() {
+v_array = [];
+i = 0;
+$('input.txt').each(function() {
+    var val = this.value;
+	//alert('val: '+val);
+    if (val.length > 0 ) {
+	//    alert('val:'+val);
+		v_array[i] = val;
+        i += 1;
+    }
+});
+if(v_array.length > 1  )
+{
+//alert(checkIfArrayIsUnique(v_array));
+	if(!checkIfArrayIsUnique(v_array))
+	   alert('Duplicate Class Name Found');
+}
+});
+
+});
+function checkIfArrayIsUnique(myArray) 
+    {
+      isUnique=true
+
+        for (var i = 0; i < myArray.length; i++) 
+        {
+            for (var j = 0; j < myArray.length; j++) 
+            {
+                if (i != j) 
+                {
+
+                    if (myArray[i] == myArray[j]) 
+                    {
+                        isUnique=false
+                    }
+                }
+            }
+        }
+        return isUnique;
+    }
+function loadSessions(pThis)
+{
+	for(i = 1; i <= 5; i++) {
+	  v_div_id = '#div_id_'+i;
+	  $(v_div_id).css("display", "none");
+	}
+	$("#btn_id_1").css("display", "none");	
+	
+	v_sel = pThis.value;
+	var v_id = 0; 
+	//alert(v_sel);
+	
+	 for(i = 1; i <= v_sel; i++) {
+	  v_div_id = '#div_id_'+i;
+	  $(v_div_id).css("display", "block");
+	  
+	}
+	 if (v_sel > 0)
+		$("#btn_id_1").css("display", "block");
+		
+}
+function callSubmit(pThis)
+{
+  $(pThis).hide();
+  //alert($('#cls').val());
+  for(i = 1; i <= $('#cls').val(); i++) {
+	  v_file_id = '#file_id_'+i;
+	  if($(v_file_id).val() == '')
+	  {
+	    alert('Please select File for Class# '+i);
+		$("#btn_id_1").css("display", "block");
+		exit;
+	  }
+	  
+	}
+  $("#spinner").css("display", "block");
+  setTimeout(function(){ 
+						$("#spinner").css("display", "none"); 
+						$("#btn_id_1").css("display", "block");
+					   }, 3000);
+}
+
+
+
+</script>
+</head> 
+ 
+<body>
+<h1 style="text-align:center;color:blue;">Training Session</h1>
+<div id="spinner" style="display:none">  </div>
+<form id="myForm">
+<label for="classes">Select Number of Classes:</label>
+<select name="cls" id="cls" onChange="loadSessions(this);">
+  <option value="0" selected="selected" >-Select-</option>
+<!-- <option value="1">1</option> -->
+  <option value="2">2</option>
+  <option value="3">3</option>
+  <option value="4">4</option>
+  <option value="5">5</option>
+</select>
+<br><br>
+
+<div id="div_id_1" style="display:none">
+	<label for="input1">Class #1</label>
+    <input class="txt" id="file1_input" type="text"><br>
+	<input type="file" id="file_id_1" name="filename" multiple>
+	<table cellspacing="0" cellpadding="0" width="50%" border="1">
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Size</th>
+				<th>Type</th>
+
+		</thead>
+		<tbody id="file1details"></tbody>
+	</table>
+	<div id="file1totalsize">Total Uploaded File Size(s): <span>0</span> MB</div>
+	<div id="file1remainsize">Remain: <span>0</span> MB</div>
+<br><br>
+</div>
+
+<div id="div_id_2" style="display:none">
+	<label for="input2">Class #2</label>
+    <input class="txt" id="file2_input" type="text"><br>
+	<input type="file" id="file_id_2" name="filename" multiple>
+<br><br>
+</div>
+
+<div id="div_id_3" style="display:none">
+	<label for="input3">Class #3</label>
+    <input class="txt" id="file3_input" type="text"><br>
+	<input type="file" id="file_id_3" name="filename" multiple>
+<br><br>	
+</div>
+
+<div id="div_id_4" style="display:none">
+	<label for="input4">Class #4</label>
+    <input class="txt" id="file4_input" type="text"><br>
+	<input type="file" id="file_id_4" name="filename" multiple>
+<br><br>
+</div>
+
+<div id="div_id_5" style="display:none">
+	<label for="input5">Class #5</label>
+    <input class="txt" id="file5_input" type="text"><br>
+	<input type="file" id="file_id_5" name="filename" multiple>
+<br><br>
+</div>
+
+<input type="button" id="btn_id_1" value="Submit Classes"  style="display:none;"/>
+<input type="reset" value="Reset">
+<!-- onClick="callSubmit(this);" -->
+</form>
+</body>
+</html>
