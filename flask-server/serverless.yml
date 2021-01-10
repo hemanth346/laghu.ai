@@ -1,0 +1,114 @@
+# serverless.yml
+service: serverless-flask
+
+provider:
+  name: aws
+  runtime: python3.6
+  stage: prod
+  region: ap-south-1
+  timeout: 60
+  environment:
+    S3_BUCKET: S3_BUCKET
+    EC2_INSTANCE_ID: EC2_INSTANCE_ID
+    REGION: ap-south-1
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - s3:*
+      Resource: arn:aws:s3:::S3_BUCKET/*
+    - Effect: 'Allow'
+      Action:
+        - ec2:StartInstances
+        - ec2:StopInstances
+      Resource: arn:aws:ec2:ap-south-1:EC2_INSTANCE_ID:instance/*
+    - Effect: 'Allow'
+      Action:
+        - ec2:DescribeInstances
+      Resource: '*'
+plugins:
+  - serverless-python-requirements
+  - serverless-wsgi
+
+package:
+  exclude:
+    - package.json
+    - package-lock.json
+    - node_modules/**
+    - cache/**
+    - __pycache__/**
+    - .pytest_cache/**
+
+
+functions:
+  app:
+    handler: wsgi_handler.handler
+    memorySize: 3008
+    timeout: 60
+    events:
+      - http: ANY /
+      - http: 'ANY /{proxy+}'
+
+  # train:
+  #   handler: wsgi_handler.train
+  #   memorySize: 3008 # MB
+  #   timeout: 30 # seconds
+  #   events:
+  #     - http:
+  #         path: train
+  #         method: post
+
+  # status:
+  #   handler: wsgi_handler.status
+  #   memorySize: 3008 # MB
+  #   timeout: 30 # seconds
+  #   events:
+  #     - http:
+  #         path: status
+  #         method: get
+
+  # start:
+  #   handler: wsgi_handler.server_start
+  #   memorySize: 3008 # MB
+  #   timeout: 30 # seconds
+  #   events:
+  #     - http:
+  #         path: start
+  #         method: get
+
+  # stop:
+  #   handler: wsgi_handler.server_stop
+  #   memorySize: 3008 # MB
+  #   timeout: 30 # seconds
+  #   events:
+  #     - http:
+  #         path: stop
+  #         method: get
+
+
+
+custom:
+  wsgi:
+    #entry point
+    app: app.app 
+    packRequirements: false
+  pythonRequirements:
+    # works without dockerizing
+    # dockerizePip: true
+    # dockerizePip: non-linux
+    # https://github.com/UnitedIncome/serverless-python-requirements/issues/373
+    # zip: true
+    # slim: true
+    # strip: false
+    noDeploy:
+      - docutils
+      - jmespath
+      - pip
+      - python-dateutil
+      - setuptools
+      - six
+      - tensorboard
+    useStaticCache: true
+    useDownloadCache: true
+    cacheLocation: "./cache"
+
+
